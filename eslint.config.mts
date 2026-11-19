@@ -21,6 +21,7 @@ export default defineConfig(
 		languageOptions: {
 			globals: {
                 ...globals.browser,
+                ...globals.node,
                 ...obsidianGlobals,
                 ...globals.mocha,
                 WebdriverIO: "readonly",
@@ -29,7 +30,7 @@ export default defineConfig(
 				projectService: {
 					allowDefaultProject: ['eslint.config.*'],
 				},
-                tsconfigRootDir: import.meta.dirname,
+                tsconfigRootDir: process.cwd(),
 				extraFileExtensions: ['.json'],
 			},
 		},
