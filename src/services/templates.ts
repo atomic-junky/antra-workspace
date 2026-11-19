@@ -89,6 +89,7 @@ export class TemplateService implements Service {
 	}
 
 	snapshotSchemas() {
+		this.schemaKeys.clear();
 		for (const t of this.getTemplates()) {
 			this.schemaKeys.set(t.path, Object.keys(this.getSchema(t)));
 		}

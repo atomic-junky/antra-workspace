@@ -8,9 +8,12 @@ export const DEFAULT_SETTINGS: AntraSettings = {
 };
 
 export class SettingsTab extends PluginSettingTab {
+    private plugin: AntraPlugin;
+
     constructor(app: App, plugin: AntraPlugin) {
         super(app, plugin);
         this.app = app;
+        this.plugin = plugin;
     }
 
     getSettingDefinitions(): SettingDefinitionItem<keyof AntraSettings>[] {
@@ -41,5 +44,21 @@ export class SettingsTab extends PluginSettingTab {
 		});
 
         return items;
+    }
+
+    async setControlValue(
+        key: string,
+        value: unknown,
+    ): Promise<void> {
+        if (key === 'templateFolder') {
+            this.plugin.settings.templateFolder =
+                typeof value === 'string' ? value : '';
+        } else if (key === 'uppercasePropertyNames') {
+            this.plugin.settings.uppercasePropertyNames =
+                typeof value === 'boolean' ? value : false;
+        } else {
+            return;
+        }
+        await this.plugin.saveSettings();
     }
 }

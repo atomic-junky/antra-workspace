@@ -81,6 +81,19 @@ export default class AntraPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+		this.refreshViews();
+	}
+
+	public refreshViews() {
+		this.templateService?.snapshotSchemas();
+		window.setTimeout(() => this.renderReadingInfoboxes(), 50);
+		this.app.workspace.iterateAllLeaves((leaf) => {
+			if (!(leaf.view instanceof MarkdownView)) return;
+			const cm = (
+				leaf.view.editor as unknown as { cm?: EditorView }
+			).cm;
+			cm?.dispatch({ effects: refreshInfobox.of(null) });
+		});
 	}
 
 	private renderReadingInfoboxes() {
