@@ -1,8 +1,180 @@
-/*
+.cm-sizer {
+  container-type: inline-size;
+  container-name: page-sizer;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.antra-hidden {
+	display: none !important;
+}
 
-If your plugin does not need CSS, delete this file.
+.antra-infobox-host {
+	float: right;
+	clear: right;
+	width: 380px;
+	margin: 0 0 1em 1.5em;
+}
 
-*/
+.antra-resource .metadata-container {
+	display: none !important;
+}
+
+.antra-infobox {
+    --padding: 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-l);
+	background: var(--background-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding);
+}
+
+.antra-infobox > * {
+	padding: 0 var(--padding);
+}
+
+.antra-infobox > *:first-child {
+	padding: var(--padding) var(--padding) 0 var(--padding);
+}
+
+.antra-infobox > *:last-child {
+	padding: 0 var(--padding) var(--padding) var(--padding);
+}
+
+.antra-infobox .infobox-header {
+	display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+}
+
+.infobox-header h1 {
+	margin: 0;
+    width: 100%;
+	text-align: center !important;
+}
+
+.infobox-header h1::after {
+    display: none;
+}
+
+.titlebar-buttons {
+    position: absolute;
+    right: var(--padding);
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+}
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-muted);
+}
+.icon-btn:hover {
+    color: var(--text-normal);
+    background: var(--background-modifier-hover);
+}
+
+.antra-infobox table {
+	border-collapse: collapse;
+	width: 100%;
+	margin: 0;
+}
+
+.antra-infobox th,
+.antra-infobox td {
+	border: none;
+	padding: 3px 6px;
+	vertical-align: top;
+    padding: 6px calc(var(--padding) + 6px);
+}
+
+.antra-infobox th {
+	text-align: left;
+	min-width: 50%;
+	color: var(--text-muted);
+	font-weight: 700;
+}
+.antra-infobox tr {
+	background: var(--table-background);
+}
+
+.antra-infobox tr:nth-child(odd) {
+	background: var(--table-row-alt-background);
+}
+
+.antra-infobox input[type='text'],
+.antra-infobox input[type='number'],
+.antra-infobox input[type='date'],
+.antra-infobox input[type='datetime-local'] {
+	width: 100%;
+	background: var(--background-modifier-form-field);
+}
+
+.antra-infobox .cover {
+	display: block;
+	width: 100%;
+	border-radius: 4px;
+	margin-bottom: 8px;
+}
+.antra-infobox .image-actions {
+	display: flex;
+	gap: var(--size-2-3);
+	justify-content: center;
+}
+.antra-infobox .add-image {
+	display: block;
+	width: 100%;
+}
+
+.antra-infobox img.cover {
+	max-height: 35vh;
+	object-fit: contain;
+    background: var(--background-primary-alt);
+    object-position: center;
+    margin: 0;
+}
+
+td:has(.antra-infobox-actions) {
+	display: flex;
+	flex-flow: row wrap;
+	gap: var(--size-2-3);
+	justify-content: space-between;
+	align-items: center;
+}
+
+.antra-infobox-actions {
+	display: flex;
+	flex-flow: row nowrap;
+	gap: var(--size-2-3);
+	margin: unset auto;
+}
+
+.antra-infobox-actions button {
+	padding-top: 0;
+	padding-bottom: 0;
+	min-height: 100%;
+	font-size: var(--font-preferred-size);
+}
+
+.antra-infobox span[role=link] {
+	color: var(--link-color);
+	cursor: pointer;
+	text-decoration-line: var(--link-decoration);
+}
+
+.antra-infobox span[role=link]:hover {
+	color: var(--link-color-hover);
+	text-decoration-line: var(--link-decoration-hover);
+}
+
+@container page-sizer (max-width: 600px) {
+	.antra-infobox-host {
+		float: none;
+		width: auto;
+		max-width: 100%;
+		margin: 0 0 1em 0;
+	}
+}

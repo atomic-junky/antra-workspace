@@ -1,8 +1,47 @@
-import obsidianmd from 'eslint-plugin-obsidianmd';
-import globals from 'globals';
 import { globalIgnores, defineConfig } from 'eslint/config';
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
+import globals from "globals";
+import obsidianmd from 'eslint-plugin-obsidianmd'
+
+const obsidianGlobals = {
+    activeWindow: "readonly",
+    activeDocument: "readonly",
+    createEl: "readonly",
+    createDiv: "readonly",
+    createSpan: "readonly",
+    createSvg: "readonly",
+    createFragment: "readonly",
+};
 
 export default defineConfig(
+    eslint.configs.recommended,
+    ...tseslint.configs.recommended,
+	{
+		languageOptions: {
+			globals: {
+                ...globals.browser,
+                ...obsidianGlobals,
+                ...globals.mocha,
+                WebdriverIO: "readonly",
+			},
+			parserOptions: {
+				projectService: {
+					allowDefaultProject: ['eslint.config.*'],
+				},
+                tsconfigRootDir: import.meta.dirname,
+				extraFileExtensions: ['.json'],
+			},
+		},
+	},
+	...obsidianmd.configs.recommended,
+	{
+		rules: {
+            "no-restricted-imports": "off",
+            "@typescript-eslint/no-restricted-imports": "off",
+            "obsidianmd/hardcoded-config-path": "off",
+        },
+	},
 	globalIgnores([
 		'node_modules',
 		'dist',
@@ -14,19 +53,4 @@ export default defineConfig(
 		'package-lock.json',
 		'tsconfig.json',
 	]),
-	{
-		languageOptions: {
-			globals: {
-				...globals.browser,
-			},
-			parserOptions: {
-				projectService: {
-					allowDefaultProject: ['eslint.config.mts', 'manifest.json'],
-				},
-				tsconfigRootDir: import.meta.dirname,
-				extraFileExtensions: ['.json'],
-			},
-		},
-	},
-	...obsidianmd.configs.recommended,
 );

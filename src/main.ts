@@ -1,114 +1,138 @@
-import {
-	Editor,
-	MarkdownView,
-	MarkdownFileInfo,
-	Modal,
-	Notice,
-	Plugin,
-} from 'obsidian';
-import {
-	DEFAULT_SETTINGS,
-	MyPluginSettings,
-	SampleSettingTab,
-} from './settings';
+import { MarkdownView, Plugin } from 'obsidian';
+import { DEFAULT_SETTINGS, SettingsTab } from './settings';
+import { TemplateService } from './services/templates';
+import type { AntraSettings } from './types';
+import { ModalService } from './modals';
+import { infoboxExtension, refreshInfobox } from './infobox/InfoBoxExtension';
+import Infobox from './infobox/InfoBox.svelte';
+import { mount, unmount } from 'svelte';
+import { EditorView } from '@codemirror/view';
+import { createInfoboxProps } from './infobox/props';
 
-// Remember to rename these classes and interfaces!
-
-export default class MyPlugin extends Plugin {
-	settings!: MyPluginSettings;
+export default class AntraPlugin extends Plugin {
+	public settings: AntraSettings = { ...DEFAULT_SETTINGS };
+	public templateService!: TemplateService;
+	public modalService!: ModalService;
+	private readingComponents = new WeakMap<
+		HTMLElement,
+		ReturnType<typeof mount>
+	>();
 
 	async onload() {
 		await this.loadSettings();
+		this.addSettingTab(new SettingsTab(this.app, this));
 
-		// This creates an icon in the left ribbon.
-		this.addRibbonIcon('dice', 'Sample', (_evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
+		const getFolder = () => this.settings.templateFolder;
 
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status bar text');
+		this.templateService = new TemplateService(this, getFolder);
+		this.modalService = new ModalService(this, getFolder);
 
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-modal-simple',
-			name: 'Open modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			},
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'replace-selected',
-			name: 'Replace selected content',
-			editorCallback: (
-				editor: Editor,
-				_ctx: MarkdownView | MarkdownFileInfo,
-			) => {
-				editor.replaceSelection('Sample editor command');
-			},
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-modal-complex',
-			name: 'Open modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView =
-					this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
+		this.templateService.onLoad();
+		this.modalService.onLoad();
 
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-				return false;
-			},
-		});
+		this.registerEditorExtension(infoboxExtension(this.templateService));
+		const update = () =>
+			window.setTimeout(() => this.renderReadingInfoboxes(), 50);
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.app.workspace.onLayoutReady(update);
+		this.registerEvent(this.app.workspace.on('layout-change', update));
+		this.registerEvent(this.app.workspace.on('active-leaf-change', update));
+		this.registerEvent(this.app.workspace.on('file-open', update));
+		this.registerEvent(this.app.metadataCache.on('changed', update));
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(activeDocument, 'click', (_evt: MouseEvent) => {
-			new Notice('Click');
-		});
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(
-			window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000),
+		this.registerEvent(
+			this.app.metadataCache.on('changed', () => {
+				this.app.workspace.iterateAllLeaves((leaf) => {
+					if (!(leaf.view instanceof MarkdownView)) return;
+					const cm = (
+						leaf.view.editor as unknown as { cm?: EditorView }
+					).cm;
+					cm?.dispatch({ effects: refreshInfobox.of(null) });
+				});
+			}),
 		);
 	}
 
-	onunload() {}
+	onunload() {
+		this.templateService.onUnload();
+		this.modalService.onUnload();
+
+		document
+			.querySelectorAll<HTMLElement>('.antra-infobox-host')
+			.forEach((el) => {
+				const comp = this.readingComponents.get(el);
+				if (comp) void unmount(comp);
+				el.remove();
+			});
+		document
+			.querySelectorAll('.antra-resource')
+			.forEach((el) => el.removeClass('antra-resource'));
+	}
 
 	async loadSettings() {
-		this.settings = Object.assign(
+		const raw = (await this.loadData()) as unknown;
+		const settings = Object.assign(
 			{},
 			DEFAULT_SETTINGS,
-			(await this.loadData()) as Partial<MyPluginSettings>,
+			raw as Partial<AntraSettings>,
 		);
+		this.settings = settings;
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
-}
 
-class SampleModal extends Modal {
-	onOpen() {
-		const { contentEl } = this;
-		contentEl.setText('Woah!');
+	private renderReadingInfoboxes() {
+		this.updateResourceClasses();
+		this.app.workspace.iterateAllLeaves((leaf) => {
+			const view = leaf.view;
+			if (
+				!(view instanceof MarkdownView) ||
+				view.getMode() !== 'preview' ||
+				!view.file
+			)
+				return;
+
+			const sizer =
+				view.previewMode.containerEl.querySelector<HTMLElement>(
+					'.markdown-preview-sizer',
+				);
+			if (!sizer) return;
+
+			sizer
+				.querySelectorAll<HTMLElement>('.antra-infobox-host')
+				.forEach((old) => {
+					const comp = this.readingComponents.get(old);
+					if (comp) void unmount(comp);
+					old.remove();
+				});
+
+			const data = this.templateService.getInfoboxData(view.file);
+			if (!data) return;
+
+			const host = createDiv({ cls: 'antra-infobox-host' });
+			this.readingComponents.set(
+				host,
+				mount(Infobox, {
+					target: host,
+					props: createInfoboxProps(this.templateService, data),
+				}),
+			);
+			const metadata = sizer.querySelector('.metadata-container');
+			if (metadata) metadata.after(host);
+			else sizer.prepend(host);
+		});
 	}
 
-	onClose() {
-		const { contentEl } = this;
-		contentEl.empty();
+	private updateResourceClasses() {
+		this.app.workspace.iterateAllLeaves((leaf) => {
+			const view = leaf.view;
+			if (!(view instanceof MarkdownView)) return;
+			const isResource =
+				!!view.file &&
+				this.templateService.getTemplateOf(view.file) !== null;
+			view.containerEl.toggleClass('antra-resource', isResource);
+		});
 	}
 }
