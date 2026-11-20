@@ -8,10 +8,12 @@
 }
 
 .antra-infobox-host {
+	position: relative;
 	float: right;
 	clear: right;
 	width: 380px;
 	margin: 0 0 1em 1.5em;
+	z-index: 1;
 }
 
 .antra-resource .metadata-container {
