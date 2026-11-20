@@ -7,6 +7,11 @@ div {
   container-name: page-sizer;
 }
 
+.markdown-preview-sizer {
+	container-type: inline-size;
+	container-name: page-sizer;
+}
+
 .antra-hidden {
 	display: none !important;
 }
@@ -16,8 +21,19 @@ div {
 	float: right;
 	clear: right;
 	width: 380px;
+	max-width: 100%;
+	box-sizing: border-box;
 	margin: 0 0 1em 1.5em;
 	z-index: 1;
+	container-type: inline-size;
+	container-name: infobox;
+}
+
+.cm-editor .antra-infobox-host {
+	float: right;
+	clear: right;
+	width: 380px;
+	margin: 0 0 1em 1.5em;
 }
 
 .antra-resource .metadata-container {
@@ -87,6 +103,7 @@ div {
 	border-collapse: collapse;
 	width: 100%;
 	margin: 0;
+	table-layout: fixed;
 }
 
 .antra-infobox th,
@@ -95,13 +112,18 @@ div {
 	padding: 3px 6px;
 	vertical-align: top;
     padding: 6px calc(var(--padding) + 6px);
+	box-sizing: border-box;
 }
 
 .antra-infobox th {
 	text-align: left;
-	min-width: 50%;
+	width: 38%;
 	color: var(--text-muted);
 	font-weight: 700;
+}
+
+.antra-infobox td {
+	width: 62%;
 }
 .antra-infobox tr {
 	background: var(--table-background);
@@ -116,6 +138,7 @@ div {
 .antra-infobox input[type='date'],
 .antra-infobox input[type='datetime-local'] {
 	width: 100%;
+	box-sizing: border-box;
 	background: var(--background-modifier-form-field);
 }
 
@@ -143,19 +166,12 @@ div {
     margin: 0;
 }
 
-td:has(.antra-infobox-actions) {
-	display: flex;
-	flex-flow: row wrap;
-	gap: var(--size-2-3);
-	justify-content: space-between;
-	align-items: center;
-}
-
 .antra-infobox-actions {
 	display: flex;
 	flex-flow: row nowrap;
 	gap: var(--size-2-3);
-	margin: unset auto;
+	margin: 0;
+	float: right;
 }
 
 .antra-infobox-actions button {
@@ -178,9 +194,29 @@ td:has(.antra-infobox-actions) {
 
 @container page-sizer (max-width: 600px) {
 	.antra-infobox-host {
-		float: none;
-		width: auto;
-		max-width: 100%;
-		margin: 0 0 1em 0;
+		width: min(380px, 100%);
+	}
+}
+
+@container infobox (max-width: 320px) {
+	.antra-infobox table,
+	.antra-infobox tbody {
+		display: block;
+		width: 100%;
+	}
+
+	.antra-infobox tr {
+		display: block;
+		width: 100%;
+	}
+
+	.antra-infobox th,
+	.antra-infobox td {
+		display: block;
+		width: 100%;
+	}
+
+	.antra-infobox th {
+		padding-bottom: 2px;
 	}
 }
