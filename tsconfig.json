@@ -12,7 +12,6 @@
 		"isolatedModules": true,
 		"skipLibCheck": true,
 		"ignoreDeprecations": "6.0",
-		"verbatimModuleSyntax": true,
 		"forceConsistentCasingInFileNames": true,
 		"allowSyntheticDefaultImports": true,
 		"lib": ["DOM", "ES5", "ES6", "ES7", "ESNext"]
