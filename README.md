@@ -9,12 +9,10 @@ Each template defines a set of properties. When you create a new resource, you c
 - Create resources from templates
 - Inherit properties from a template
 - Display an infobox in editing and reading modes
-- Supported property types: text, number, list, checkbox, date, date-time, and links to other notes
 - Add a cover image or banner to a resource
 - Edit properties directly from the infobox
 - Automatically synchronize new properties with existing resources
 - Automatically rename properties when they are renamed in templates
-- Optionally display property names in uppercase
 
 ## Usage
 
@@ -73,17 +71,7 @@ When you create a resource from a template, Antra replaces the following variabl
 | `{{date}}` | Current date in `YYYY-MM-DD` format |
 | `{{time}}` | Current time in `HH:mm` format |
 
-## Settings
-
-- **Template folder**: folder containing the available templates
-- **Uppercase property names**: displays property names in uppercase within the infobox
-
 ## Development
-
-### Requirements
-
-- Node.js
-- npm
 
 ### Install dependencies
 
@@ -112,5 +100,5 @@ npm run svelte-check
 
 ## License
 
-This project is distributed under the license described in [LICENSE](LICENSE).
+This project is distributed under the [MIT LICENSE](LICENSE).
 
