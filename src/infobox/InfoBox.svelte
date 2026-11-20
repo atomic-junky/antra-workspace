@@ -16,6 +16,10 @@
         onmenu?: (evt: MouseEvent) => void;
         actions: FieldActions;
     } = $props();
+
+    function getPropertyLabel(key: string): string {
+        return key.replace(/\s*\([^()]*\)\s*$/, '').trim();
+    }
 </script>
 
 <aside class="antra-infobox">
@@ -45,8 +49,9 @@
         <table>
             <tbody>
                 {#each rows as row (row.key)}
+                    {@const propertyLabel = getPropertyLabel(row.key)}
                     <tr>
-                        <th class="antra-property-name">{row.key}</th>
+                        <th class="antra-property-name">{propertyLabel}</th>
                         <td>
                             {#if row.kind === 'list'}
                                 <ListField kind={row.kind} value={row.value} {editable} {actions}
@@ -58,7 +63,7 @@
                                 <NoteField kind={row.kind} value={row.value} {editable} {actions}
                                     onchange={(value: unknown) => onedit?.(row.key, value)} />
                             {:else}
-                                <InputField kind={row.kind} value={row.value} {editable} {actions}
+                                <InputField kind={row.kind} key={row.key} value={row.value} {editable} {actions}
                                     onchange={(value: unknown) => onedit?.(row.key, value)} />
                             {/if}
                         </td>

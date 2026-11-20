@@ -71,7 +71,7 @@ div {
 .infobox-header h1 {
 	margin: 0;
     width: 100%;
-	text-align: center;
+	text-align: center !important;
 }
 
 .infobox-header h1::after {
@@ -139,6 +139,20 @@ div {
 	width: 100%;
 	box-sizing: border-box;
 	background: var(--background-modifier-form-field);
+}
+
+.antra-input-with-suffix {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.antra-input-with-suffix input {
+	min-width: 0;
+}
+
+.antra-input-suffix {
+	white-space: nowrap;
 }
 
 .antra-infobox .cover {

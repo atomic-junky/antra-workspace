@@ -5,6 +5,7 @@ export interface FieldActions {
 
 export interface FieldProps {
     kind: string;
+    key?: string;
     value: unknown;
     editable: boolean;
     onchange: (value: unknown) => void;
