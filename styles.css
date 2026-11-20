@@ -1,5 +1,5 @@
 div {
-	--file-line-width: 850px !important;
+	--file-line-width: 850px;
 }
 
 .cm-sizer {
@@ -12,7 +12,7 @@ div {
 	container-name: page-sizer;
 }
 
-.antra-hidden {
+*.antra-hidden {
 	display: none !important;
 }
 
@@ -71,7 +71,7 @@ div {
 .infobox-header h1 {
 	margin: 0;
     width: 100%;
-	text-align: center !important;
+	text-align: center;
 }
 
 .infobox-header h1::after {
@@ -109,7 +109,6 @@ div {
 .antra-infobox th,
 .antra-infobox td {
 	border: none;
-	padding: 3px 6px;
 	vertical-align: top;
     padding: 6px calc(var(--padding) + 6px);
 	box-sizing: border-box;
