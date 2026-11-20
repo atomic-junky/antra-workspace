@@ -106,7 +106,7 @@ export default class AntraPlugin extends Plugin {
 				!view.file
 			)
 				return;
-
+			
 			const sizer =
 				view.previewMode.containerEl.querySelector<HTMLElement>(
 					'.markdown-preview-sizer',
@@ -144,6 +144,7 @@ export default class AntraPlugin extends Plugin {
 			if (!(view instanceof MarkdownView)) return;
 			const isResource =
 				!!view.file &&
+				!this.templateService.isTemplate(view.file) &&
 				this.templateService.getTemplateOf(view.file) !== null;
 			view.containerEl.toggleClass('antra-resource', isResource);
 		});

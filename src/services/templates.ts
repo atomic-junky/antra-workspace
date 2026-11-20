@@ -95,11 +95,28 @@ export class TemplateService implements Service {
 		}
 	}
 
-	getSchema(template: TFile): Frontmatter {
+	getSchema(template: TFile, previousFiles: TFile[] = []): Frontmatter {
 		const fm: Frontmatter = {
 			...(this.plugin.app.metadataCache.getFileCache(template)
 				?.frontmatter ?? {}),
 		};
+		
+		let subTemplate = this.getTemplateOf(template);
+		if (subTemplate) {
+			if (previousFiles.includes(subTemplate)) {
+				new Notice(
+					`Circular template reference detected: ${subTemplate.path} is already in the chain.`,
+				);
+			} else {
+				const subSchema = this.getSchema(subTemplate, [...previousFiles, template]);
+				for (const [key, value] of Object.entries(subSchema)) {
+					if (!(key in fm)) {
+						fm[key] = value;
+					}
+				}
+			}
+		}
+
 		delete fm['position'];
 		delete fm[LINK_KEY];
 		return fm;
@@ -199,6 +216,10 @@ export class TemplateService implements Service {
 	}
 
     getInfoboxData(resource: TFile) {
+		// If the resource is a template, we don't want to show an infobox for it.
+		if (this.isTemplate(resource)) return null;
+
+		// If the resource doesn't have a template, we don't want to show an infobox for it.
         const template = this.getTemplateOf(resource);
         if (!template) return null;
 
