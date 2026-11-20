@@ -1,6 +1,6 @@
 {
     "name": "obsidian-antra",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Create dynamic template-based resources with wiki-style infoboxes for Obsidian.",
     "main": "main.js",
     "type": "module",
