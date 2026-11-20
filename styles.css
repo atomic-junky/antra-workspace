@@ -1,3 +1,7 @@
+div {
+	--file-line-width: 850px !important;
+}
+
 .cm-sizer {
   container-type: inline-size;
   container-name: page-sizer;

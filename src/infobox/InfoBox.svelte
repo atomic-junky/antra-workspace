@@ -1,5 +1,8 @@
 <script lang="ts">
-    import { FIELD_COMPONENTS } from './fields';
+    import InputField from './fields/InputField.svelte';
+    import ListField from './fields/ListField.svelte';
+    import CheckboxField from './fields/CheckboxField.svelte';
+    import NoteField from './fields/NoteField.svelte';
     import type { FieldActions } from './fields/types';
 
     type Row = { key: string; kind: string; value: unknown };
@@ -42,17 +45,22 @@
         <table>
             <tbody>
                 {#each rows as row (row.key)}
-                    {@const Field = FIELD_COMPONENTS[row.kind] ?? FIELD_COMPONENTS.text}
                     <tr>
                         <th class="antra-property-name">{row.key}</th>
                         <td>
-                            <Field
-                                kind={row.kind}
-                                value={row.value}
-                                {editable}
-                                {actions}
-                                onchange={(value: unknown) => onedit?.(row.key, value)}
-                            />
+                            {#if row.kind === 'list'}
+                                <ListField kind={row.kind} value={row.value} {editable} {actions}
+                                    onchange={(value: unknown) => onedit?.(row.key, value)} />
+                            {:else if row.kind === 'checkbox'}
+                                <CheckboxField kind={row.kind} value={row.value} {editable} {actions}
+                                    onchange={(value: unknown) => onedit?.(row.key, value)} />
+                            {:else if row.kind === 'note'}
+                                <NoteField kind={row.kind} value={row.value} {editable} {actions}
+                                    onchange={(value: unknown) => onedit?.(row.key, value)} />
+                            {:else}
+                                <InputField kind={row.kind} value={row.value} {editable} {actions}
+                                    onchange={(value: unknown) => onedit?.(row.key, value)} />
+                            {/if}
                         </td>
                     </tr>
                 {/each}
