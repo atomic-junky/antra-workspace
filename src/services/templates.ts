@@ -226,17 +226,24 @@ export class TemplateService implements Service {
         const schema = this.getSchema(template);
         const fm = getCachedFrontmatter(this.plugin.app, resource);
 
-        const rows = Object.keys(schema).map(key => ({
-            key,
-            kind: this.getKind(key, schema[key]),
-            value: fm[key] ?? schema[key] ?? null,
-        }));
+        const rows = Object.keys(schema).map(key => {
+			const label = key.replace(/\s*\([^()]*\)\s*$/, '').trim();
+			return {
+				key,
+				label: this.plugin.settings.capitalizePropertyNames
+					? label.charAt(0).toLocaleUpperCase() + label.slice(1)
+					: label,
+				kind: this.getKind(key, schema[key]),
+				value: fm[key] ?? schema[key] ?? null,
+			};
+		});
 
-		let title = resource.basename;
-		if (this.plugin.settings.uppercasePropertyNames)
-			title = title.toUpperCase();
-
-        return { title: title, path: resource.path, image: this.getImageUrl(resource, fm), rows };
+        return {
+			title: resource.basename,
+			path: resource.path,
+			image: this.getImageUrl(resource, fm),
+			rows,
+		};
     }
 
 	isTemplate(file: TFile): boolean {

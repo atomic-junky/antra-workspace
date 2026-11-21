@@ -5,7 +5,7 @@
     import NoteField from './fields/NoteField.svelte';
     import type { FieldActions } from './fields/types';
 
-    type Row = { key: string; kind: string; value: unknown };
+    type Row = { key: string; label?: string; kind: string; value: unknown };
 
     let { title, rows, image = null, editable = false, onedit, onmenu, actions }: {
         title: string;
@@ -17,9 +17,6 @@
         actions: FieldActions;
     } = $props();
 
-    function getPropertyLabel(key: string): string {
-        return key.replace(/\s*\([^()]*\)\s*$/, '').trim();
-    }
 </script>
 
 <aside class="antra-infobox">
@@ -49,9 +46,8 @@
         <table>
             <tbody>
                 {#each rows as row (row.key)}
-                    {@const propertyLabel = getPropertyLabel(row.key)}
                     <tr>
-                        <th class="antra-property-name">{propertyLabel}</th>
+                        <th class="antra-property-name">{row.label ?? row.key}</th>
                         <td>
                             {#if row.kind === 'list'}
                                 <ListField kind={row.kind} value={row.value} {editable} {actions}

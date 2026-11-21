@@ -71,11 +71,10 @@ export default class AntraPlugin extends Plugin {
 
 	async loadSettings() {
 		const raw = (await this.loadData()) as unknown;
-		const settings = Object.assign(
-			{},
-			DEFAULT_SETTINGS,
-			raw as Partial<AntraSettings>,
-		);
+		const settings = {
+			...DEFAULT_SETTINGS,
+			...(raw as Partial<AntraSettings>)
+		};
 		this.settings = settings;
 	}
 

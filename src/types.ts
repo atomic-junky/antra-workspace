@@ -28,5 +28,5 @@ export interface TemplateDef {
 
 export interface AntraSettings {
 	templateFolder: string;
-	uppercasePropertyNames: boolean;
+	capitalizePropertyNames: boolean;
 }

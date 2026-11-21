@@ -4,7 +4,7 @@ import { type AntraSettings } from "../types.js";
 
 export const DEFAULT_SETTINGS: AntraSettings = {
 	templateFolder: "",
-	uppercasePropertyNames: true,
+	capitalizePropertyNames: true,
 };
 
 export class SettingsTab extends PluginSettingTab {
@@ -34,11 +34,11 @@ export class SettingsTab extends PluginSettingTab {
 		items.push({
 			type: 'group',
 			items: [{
-				name: "Uppercase property names",
-				desc: "Display property names in uppercase.",
+				name: "Capitalize property names",
+				desc: "Capitalize the first letter of property names.",
 				control: {
 					type: 'toggle',
-					key: 'uppercasePropertyNames'
+					key: 'capitalizePropertyNames'
 				}
 			}]
 		});
@@ -53,8 +53,8 @@ export class SettingsTab extends PluginSettingTab {
         if (key === 'templateFolder') {
             this.plugin.settings.templateFolder =
                 typeof value === 'string' ? value : '';
-        } else if (key === 'uppercasePropertyNames') {
-            this.plugin.settings.uppercasePropertyNames =
+        } else if (key === 'capitalizePropertyNames') {
+            this.plugin.settings.capitalizePropertyNames =
                 typeof value === 'boolean' ? value : false;
         } else {
             return;
