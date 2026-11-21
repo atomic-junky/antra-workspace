@@ -57,14 +57,14 @@ export default class AntraPlugin extends Plugin {
 		this.templateService.onUnload();
 		this.modalService.onUnload();
 
-		document
+		activeDocument
 			.querySelectorAll<HTMLElement>('.antra-infobox-host')
 			.forEach((el) => {
 				const comp = this.readingComponents.get(el);
 				if (comp) void unmount(comp);
 				el.remove();
 			});
-		document
+		activeDocument
 			.querySelectorAll('.antra-resource')
 			.forEach((el) => el.removeClass('antra-resource'));
 	}

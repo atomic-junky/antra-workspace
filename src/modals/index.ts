@@ -24,8 +24,8 @@ export class ModalService implements Service {
     }
 
     onUnload() {
-        document.querySelectorAll('.antra-new-note').forEach(el => el.remove());
-        document.querySelectorAll('.antra-hidden').forEach(el => el.removeClass('antra-hidden'));
+        activeDocument.querySelectorAll('.antra-new-note').forEach(el => el.remove());
+        activeDocument.querySelectorAll('.antra-hidden').forEach(el => el.removeClass('antra-hidden'));
     }
     
     private patchExplorerButtons() {
